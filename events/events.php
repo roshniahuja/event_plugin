@@ -268,6 +268,7 @@ function func_export_all_past_events() {
 		    }
 		    exit();
 		} 
+		
 		/* Restore original Post Data */
 		wp_reset_postdata();
 		
@@ -427,6 +428,10 @@ function events_list_filter($atts) {
 					$content .= '<span> Location : '.$location.' </span>';
 					$content .= '</div>';
 			}
+		}
+		else
+		{
+			$content .= 'No events are available';
 		}
     return $content;
 }
