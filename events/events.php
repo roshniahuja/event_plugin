@@ -351,13 +351,15 @@ function events_list_filter($atts) {
 						   	foreach($cats as $cat) {
 					
 								$content .= '<div class="search-field">';	
-									if( isset( $_GET["event_category"] ) )
-										{
-											$select = "checked = 'checked'";
-										}
 				                        
 				                        $content .= '<label class="check_content">
-				    						<input type="checkbox" name="event_category" value="'.$cat->term_id.'" '.$select.' /> '. $cat->name.'
+				    						<input type="checkbox" name="event_category" value="'.$cat->term_id.'"';
+
+										if( $_GET["event_category"] == $cat->term_id)
+										{
+											$content .= 'checked';
+										}
+				    					$content .= '/> '. $cat->name.'
 				                        </label></div>';
 				            }
 			            }
