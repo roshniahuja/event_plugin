@@ -383,7 +383,7 @@ function events_list_filter($atts) {
 			    );
 			   
 		    }
-	if (isset($_GET['start_date']) && isset($_GET['end_date']))
+	if (!empty($_GET['start_date']))
 		    {
 	        	$meta_query[] = array(
 			        array(
@@ -409,7 +409,7 @@ function events_list_filter($atts) {
 	);
 
 		$query = new WP_Query($args_address);
-					
+				
 		 if ( $query->have_posts() ) {
 			    while ( $query->have_posts() ) {
 			        $query->the_post();
