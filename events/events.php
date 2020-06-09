@@ -12,19 +12,24 @@
  * @wordpress-plugin
  * Plugin Name:       Events
  * Plugin URI:        events
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Creates a custom post type 'events' with features to create events by adding venue, location, start and end date. It will allow to export past and upcoming event.
  * Version:           1.0.0
  * Author:            Roshni Ahuja
  * Author URI:        https://about.me/roshniahuja
  * Text Domain:       events
  * Domain Path:       /languages
  */
-//Activation hook
+
+/**
+ * Activation hook
+ */
 function events_activation() {
 }
 register_activation_hook(__FILE__, 'events_activation');
 
-//Deactivation hook
+/**
+ * Deactivation hook
+ */
 function events_deactivation() {
 	// Unregister the post type, so the rules are no longer in memory.
     unregister_post_type( 'events' );
@@ -72,17 +77,16 @@ function wpt_event_post_type() {
 		'menu_icon'            => 'dashicons-calendar-alt',
 		'register_meta_box_cb' => 'wpt_add_event_metaboxes',
 	);
-
 	register_post_type( 'events', $args );
-
 }
 add_action( 'init', 'wpt_event_post_type' );  
 
+/**
+ * Registers the event type taxonomy.
+ */
 function event_type_taxo() {
- 
-	// Add new taxonomy, make it hierarchical like categories
-	//first do the translations part for GUI
-	 
+ 	
+	 //Add new taxonomy, make it hierarchical like categories
 	  $labels = array(
 	    'name' => _x( 'Event Type', 'event type' ),
 	    'singular_name' => _x( 'Event Type', 'event type' ),
@@ -97,8 +101,8 @@ function event_type_taxo() {
 	    'menu_name' => __( 'Event Types' ),
 	  );    
 	 
-	// Now register the taxonomy
-	 
+	
+	//Now register the taxonomy
 	  register_taxonomy('event_types',array('events'), array(
 	    'hierarchical' => true,
 	    'labels' => $labels,
@@ -110,8 +114,9 @@ function event_type_taxo() {
 	 
 	}
 add_action( 'init', 'event_type_taxo' ); 	
+
 /**
- * Adds a metabox to the right side of the screen under the â€œPublishâ€ box
+ * Adds a metabox to the right side of the screen
  */
 function wpt_add_event_metaboxes() {
 	add_meta_box(
@@ -124,6 +129,7 @@ function wpt_add_event_metaboxes() {
 	);
 }
 add_action( 'add_meta_boxes', 'wpt_add_event_metaboxes' );
+
 /**
  * Output the HTML for the metabox.
  */
@@ -140,13 +146,13 @@ function wpt_events_location() {
 	$location = get_post_meta( $post->ID, 'location', true );
 
 	// Output the field
-	echo '<label for="start_date">Start Date : </label>';
+	echo '<label for="start_date">'._e('Start Date','event_dom').' : </label>';
 	echo '<input type="date" placeholder="Start Date" name="start_date" value="' . $start_date. '" class="start_date">';
-	echo '<label for="end_date">End Date : </label>';
+	echo '<label for="end_date">'._e('End Date','event_dom').' : </label>';
 	echo '<input type="date" placeholder="End Date" name="end_date" value="' . $end_date. '" class="end_date">';
-	echo '<label for="event_venue">Event Venue : </label>';
+	echo '<label for="event_venue">'._e('Event Venue','event_dom').' : </label>';
 	echo '<input type="text" placeholder="Event Venue" name="event_venue" value="' . esc_textarea( $event_venue )  . '" class="event_venue">';
-	echo '<label for="location">Location : </label>';
+	echo '<label for="location">'._e('Location','event_dom').' : </label>';
 	echo '<input type="text" placeholder="Location" name="location" value="' . esc_textarea( $location )  . '" class="location">';
 
 }
@@ -200,20 +206,23 @@ function wpt_save_events_meta( $post_id, $post ) {
 }
 add_action( 'save_post', 'wpt_save_events_meta', 1, 2 );
 
+/**
+ * Call to action for export events
+ */
 add_action( 'manage_posts_extra_tablenav', 'admin_post_list_top_export_button', 20, 1 );
 function admin_post_list_top_export_button( $which ) {
     global $typenow;
- 
     if ( 'events' === $typenow && 'top' === $which ) {
-
-        ?>
-        
-        <input type="submit" name="export_past_events" id="export_past_events" class="button button-primary" value="Export Past Events" />
-        <input type="submit" name="export_upcoming_events" id="export_upcoming_events" class="button button-primary" value="Export Upcoming Events" />
-        <?php
+        echo '<div class="alignleft actions">
+        		<input type="submit" name="export_past_events" id="export_past_events" class="button button-primary" value="Export Past Events" />
+        		<input type="submit" name="export_upcoming_events" id="export_upcoming_events" class="button button-primary" value="Export Upcoming Events" />
+        	</div>';
     }
 }
-//Function to export past events
+
+/**
+ * Action to export past events
+ */
 add_action( 'init', 'func_export_all_past_events' );
 function func_export_all_past_events() {
 	if(isset($_GET['export_past_events'])) {
@@ -274,7 +283,9 @@ function func_export_all_past_events() {
 		
 	}
 }
-//Function to export Upcoming events
+/**
+ * Action to export Upcoming events
+ */
 add_action( 'init', 'export_upcoming_events' );
 function export_upcoming_events() {
 	if(isset($_GET['export_upcoming_events'])) {
@@ -334,7 +345,9 @@ function export_upcoming_events() {
 		
 	}
 }
-// Shortcode to display events and filters.
+/**
+ * Shortcode to display events and filters.
+ */
 function events_list_filter($atts) {
 	$args = array(
                'taxonomy' => 'event_types',
@@ -348,11 +361,9 @@ function events_list_filter($atts) {
 					<form  id="eventsearch" name="eventsearch" method="get" action="">
 						<div class="search-table">';
 						if($cats){
-							$content .= "<span>Event Category</span>";
+							$content .= "<span>".__('Event Category','event_dom')."</span>";
 						   	foreach($cats as $cat) {
-					
 								$content .= '<div class="search-field">';	
-				                        
 				                        $content .= '<label class="check_content">
 				    						<input type="checkbox" name="event_category" value="'.$cat->term_id.'"';
 
@@ -364,15 +375,15 @@ function events_list_filter($atts) {
 				                        </label></div>';
 				            }
 			            }
-			     	$content .= '<span>Start Date</span>';
+			     	$content .= '<span>'.__('Start Date','event_dom').'</span>';
 			     	$content .= '<div class="search-field">';	
 			     	$content .= '<input type="Date" name="start_date">';
 			     	$content .= '</div>';
-			     	$content .= '<span>End Date</span>';
+			     	$content .= '<span>'.__('End Date','event_dom').'</span>';
 			     	$content .= '<div class="search-field">';	
 			     	$content .= '<input type="Date" name="end_date">';
 			     	$content .= '</div>';	
-			     	$content .= '<button type="submit" class="filter">Filter</button>';
+			     	$content .= '<button type="submit" class="filter">'.__('Filter','event_dom').'</button>';
 	$content .= '</div></form></div>';
 	if (isset($_GET['event_category']))
 		    {
@@ -414,7 +425,6 @@ function events_list_filter($atts) {
 		 if ( $query->have_posts() ) {
 			    while ( $query->have_posts() ) {
 			        $query->the_post();
-			        
 			        $post_id = get_the_ID();
 			        $title = get_the_title();
 			        $cont = get_the_content();
@@ -425,18 +435,22 @@ function events_list_filter($atts) {
 					$content .= '<div class="events_list">';
 					$content .= '<h3><a href="'.get_permalink().'">'.$title.'</a></h3>';
 					$content .= $cont;
-					$content .= '<span> Location : '.$location.' </span>';
+					$content .= '<span> '.__('Location','event_dom').' : '.$location.' </span>';
 					$content .= '</div>';
 			}
 		}
 		else
 		{
-			$content .= 'No events are available';
+			$content .= '<div class="search-table">';
+			$content .= __('No events are available','event_dom');
+			$content .= '</div>';
 		}
     return $content;
 }
-
 add_shortcode('events', 'events_list_filter');
+/**
+ * Function to call custom script
+ */
 add_action('wp_enqueue_scripts', 'load_my_scripts');
 function load_my_scripts() {
         wp_enqueue_script( 'script', plugins_url( '/js/custom.js', __FILE__ ));
