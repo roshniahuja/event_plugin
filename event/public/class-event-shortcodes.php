@@ -119,6 +119,8 @@ function events_list_filter( $atts ) {
 			$content .= __('No events are available','event');
 			$content .= '</div>';
 		}
+		/* Restore original Post Data */
+		wp_reset_postdata();
 	$content .= '</div>';
     return $content;
 }
