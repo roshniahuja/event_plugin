@@ -1,0 +1,25 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+ .inside {
+    margin: 6px 0 0 0;
+}
+ .e-grid-row {
+    padding-top: 10px;
+    padding-bottom: 30px;
+}
+.e-grid-4 {
+    float: left;
+    width: 33.33%;
+    min-height: 1px;
+}
+.e-grid-8 {
+    float: right;
+    width: 66.66%;
+    min-height: 1px;
+}
+.egrid
+{
+	height:200px;
+}

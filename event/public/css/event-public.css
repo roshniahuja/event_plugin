@@ -1,0 +1,7 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+ .row.mb-3.events_container {
+    margin: 25px 10px;
+}
